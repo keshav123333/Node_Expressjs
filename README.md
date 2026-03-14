@@ -55,3 +55,8 @@ server .js m
     app.listen(3000,()=>{
        console.log("app is running")
     })
+
+
+bhai like postman and usko use karne ke liye jo cheez de raha hai vo bahut badiya hai 1 ghante se aage ki side pe hai maine thunder client use kiya tha as postman ni kar pata tha and like server ko public bana diya tha 
+ 
+
