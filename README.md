@@ -57,6 +57,35 @@ server .js m
     })
 
 
+# Api create post and get
+
 bhai like postman and usko use karne ke liye jo cheez de raha hai vo bahut badiya hai 1 ghante se aage ki side pe hai maine thunder client use kiya tha as postman ni kar pata tha and like server ko public bana diya tha 
- 
+
+
+
+const express=require("express")
+
+const app=express()
+// express json ko read ni and like usse readble bane ke liye express jo express.json middleware ki auth de di 
+app.use(express.json())
+
+
+const notes=[]
+
+app.get("/",(req,res)=>{
+    res.send("ehllo")
+})
+app.post("/notes",(req,res)=>{
+    notes.push(req.body)
+    res.status(200).json({
+    response:"bahi thik upload kar di maineteri file"
+    })
+})
+app.get("/notes",(req,res)=>{
+    res.status(200).json({
+        message:"ye rahe sare msg ye site e display ni honge balki inhe tujhe like postman pe dehna padeg jab vaha se get req toh json m ye reply jayega "
+       , notel:notes
+    })
+})
+module.exports=app
 
