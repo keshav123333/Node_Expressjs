@@ -142,3 +142,64 @@ bhai like postman and usko use karne ke liye jo cheez de raha hai vo bahut badiy
       
       
       module.exports=app
+
+
+# mongo db 
+
+bhai mongo db ke liye 1 hour 45 minute se video dekh uspe like kaise download karna hai vo dekhate hai and kaise setup vo bhi 
+ 
+1.npm i mongoose 
+
+## how to connect mongo 
+
+then create db folder in src folder then uss db folder mein db.js bana usme ye code
+
+db.js
+      
+      const mongoose=require("mongoose")
+      
+      
+      // mongodb+srv://nodepractice:<db_password>@nodepractice.ghrspjo.mongodb.net/    yaha password ki jagah <db_password> apna passwrod daal vdieo dekh
+      // /keshav isliye kiya as keshav naam se ek db bana diya pehle se bana ni hoga as upar wala add sirf cluster tak connect db se connect ke liye /dbname dete abhi
+      //  manully banaya ni if naam de dega if check cluster m iss naam se ko ni toh naya bana dega and connect if exist pehle se ho toh ushi se connect 
+      
+      async function ConnectDB(){
+        await  mongoose.connect("mongodb+srv://nodepractice:[yaha pe mera pass ayega]@nodepractice.ghrspjo.mongodb.net/keshav")
+        console.log("db is running")
+      } 
+      
+      module.exports=ConnectDB
+
+
+server.js
+
+
+      const app=require("./src/app")
+      const ConnectDB=require("./src/db/db")
+      
+      ConnectDB()
+      
+      app.listen(3000,()=>{
+         console.log("app is running")
+      })
+
+ye upar tak maine apna 
+Ab like schema define karna padta ki kis form m jayega input 
+
+2. models folder bana src m and models mein
+note.model.js file bana uss file ke andar
+
+         const mongoose =require("mongoose")
+         
+         const noteSchema =new mongoose.Schema({
+             title: String,
+             description:String
+         })
+         
+         const modelschema =mongoose.model("notes",noteSchema)
+         
+         module.exports=modelschema
+
+   and app.js mein aisa kuch likhenge
+
+ 
