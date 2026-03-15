@@ -6,7 +6,7 @@ install node
 ## terminal m 
 1. npm init -y
 2. npm i express
-
+3. if dynamically server satrt toh -: npx nodemon server.js
 express ek server bana deta hai usko create ke liye express ka use karte hai 
 
 index.js m
@@ -200,6 +200,79 @@ note.model.js file bana uss file ke andar
          
          module.exports=modelschema
 
-   and app.js mein aisa kuch likhenge
+ 
+ and app.js mein aisa kuch likhenge
+
+
+
+
+aur verify ke liye like data kaise dikhta uss organisation and project pe ja cluster-> browse data ya direct data explore pe click and uspe dekh tera data upload ho jaeyga 
+
+      const express=require("express")
+      const notemodel=require("./models/note.model")
+      
+      const app=express()
+      
+      // express json ko read ni and like usse readble bane ke liye express jo express.json middleware ki auth de di 
+      app.use(express.json())
+      
+       
+      
+      
+      app.get("/",(req,res)=>{
+          res.send("ehllo")
+      })
+      
+      app.post("/notes",async (req,res)=>{
+          const data=req.body
+          await notemodel.create({
+              title:data.title,
+              description: data.description
+          })
+      
+      
+          res.status(200).json({
+          response:"bahi thik upload kar di maineteri file"
+          })
+      })
+       
+      
+      app.get("/notes",async (req,res)=>{
+      //ye sare jitna data hai apke model m sab kuch return kar deta hai ek array ki form mein 
+          const notes=await notemodel.find()     // ye ek array mein return if find
+      // condition finding bhi allowed 
+      const notefilter=await notemodel.findOne({
+          title:"First part"
+      })     // ye out dict mein deti like dict and if dict if ni find so null
+          res.status(200).json({
+              message:"ye rahe sare msg ye site e display ni honge balki inhe tujhe like postman pe dehna padeg jab vaha se get req toh json m ye reply jayega "
+             , notel:notes,
+             filternote:notefilter
+          })
+      })
+      module.exports=app
+
+
+like so ab get pe hit karega tu toh uspe sre main ek jason ayega iss tarah ka :
+
+               {
+                 "message": "ye rahe sare msg ye site e display ni honge balki inhe tujhe like postman pe dehna padeg jab vaha se get req toh json m ye reply jayega ",
+                 "notel": [
+                   {
+                     "_id": "69b6c4ccccefb3d9366df767",
+                     "title": "First part",
+                     "description": "this is description for first part",
+                     "__v": 0
+                   }
+                 ],
+                 "filternote": {
+                   "_id": "69b6c4ccccefb3d9366df767",
+                   "title": "First part",
+                   "description": "this is description for first part",
+                   "__v": 0
+                 }
+               }
+
+
 
  
