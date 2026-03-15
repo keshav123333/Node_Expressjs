@@ -63,29 +63,82 @@ bhai like postman and usko use karne ke liye jo cheez de raha hai vo bahut badiy
 
 
 
-const express=require("express")
+         const express=require("express")
+         
+         const app=express()
+         // express json ko read ni and like usse readble bane ke liye express jo express.json middleware ki auth de di 
+         app.use(express.json())
+         
+         
+         const notes=[]
+         
+         app.get("/",(req,res)=>{
+             res.send("ehllo")
+         })
+         app.post("/notes",(req,res)=>{
+             notes.push(req.body)
+             res.status(200).json({
+             response:"bahi thik upload kar di maineteri file"
+             })
+         })
+         app.get("/notes",(req,res)=>{
+             res.status(200).json({
+                 message:"ye rahe sare msg ye site e display ni honge balki inhe tujhe like postman pe dehna padeg jab vaha se get req toh json m ye reply jayega "
+                , notel:notes
+             })
+         })
+         module.exports=app
 
-const app=express()
-// express json ko read ni and like usse readble bane ke liye express jo express.json middleware ki auth de di 
-app.use(express.json())
 
+# delete and patch 
+ yaha pe dekh maine :indx aise bheja hai as kyonki isse pata chalta hai express ko ki ye dynamic hai 
 
-const notes=[]
-
-app.get("/",(req,res)=>{
-    res.send("ehllo")
-})
-app.post("/notes",(req,res)=>{
-    notes.push(req.body)
-    res.status(200).json({
-    response:"bahi thik upload kar di maineteri file"
-    })
-})
-app.get("/notes",(req,res)=>{
-    res.status(200).json({
-        message:"ye rahe sare msg ye site e display ni honge balki inhe tujhe like postman pe dehna padeg jab vaha se get req toh json m ye reply jayega "
-       , notel:notes
-    })
-})
-module.exports=app
-
+       const express=require("express")
+      
+      const app=express()
+      // express json ko read ni and like usse readble bane ke liye express jo express.json middleware ki auth de di 
+      app.use(express.json())
+      
+      
+      const notes=[]
+      
+      app.get("/",(req,res)=>{
+          res.send("ehllo")
+      })
+      app.post("/notes",(req,res)=>{
+          notes.push(req.body)
+          res.status(200).json({
+          response:"bahi thik upload kar di maineteri file"
+          })
+      })
+      app.get("/notes",(req,res)=>{
+          res.status(200).json({
+              message:"ye rahe sare msg ye site e display ni honge balki inhe tujhe like postman pe dehna padeg jab vaha se get req toh json m ye reply jayega "
+             , notel:notes
+          })
+      })
+      
+      
+      // yaha maine :indx as like notes mein maan 2 index ka note delte toh notes/2 toh vo delte so express
+      // ko bata raha hu ki indx dynamic hai and baki andar main acess kiya and bas 
+      app.delete("/notes/:indx",(req,res)=>{
+          const index=req.params.indx
+          delete notes[index]
+          res.status(200).json({
+              message:"ho gaya delte"
+          })
+      
+      })
+      
+      app.patch("/notes/:indx",(req,res)=>{
+          const index=req.params.indx
+          notes[index].description=req.body.description
+          res.status(200).json({
+              "message":"description updated"
+          })
+      })
+      
+      
+      
+      
+      module.exports=app
