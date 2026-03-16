@@ -354,3 +354,9 @@ like so ab get pe hit karega tu toh uspe sre main ek jason ayega iss tarah ka :
       module.exports=app
       
 # Project
+
+Overview
+   isme hum ek like form jsime project image and caption dale and vo dusre page      pe appear ho jaye 
+
+1. service naam se ek folder alag se banya as isliye kyonki rule hai ki like ext service jaise cloud ya kuch aur like imagekit use karunga for uploading images so usko store ke liye abhi toh imagekit use kar raha hu but ho sakta hai baad m amazon s3 use karu and thode dino baad kuch aur use karu so isliye hum service mein alag se use
+
