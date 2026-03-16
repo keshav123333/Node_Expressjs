@@ -364,31 +364,31 @@ Overview
 ## phase 1
 ### structure of code 
 
-2.project_1
-│
-├── node_modules
-│
-├── src
-│   │
-│   ├── db
-│   │   └── db.js
-│   │
-│   ├── models
-│   │   └── post.model.js
-│   │
-│   ├── services
-│   │   └── storage.service.js
-│   │
-│   ├── routes
-│   │   └── post.routes.js
-│   │
-│   └── app.js
-│
-├── .env
-├── server.js
-├── package.json
-├── package-lock.json
-└── README.md
+      2.project_1
+      │
+      ├── node_modules
+      │
+      ├── src
+      │   │
+      │   ├── db
+      │   │   └── db.js
+      │   │
+      │   ├── models
+      │   │   └── post.model.js
+      │   │
+      │   ├── services
+      │   │   └── storage.service.js
+      │   │
+      │   ├── routes
+      │   │   └── post.routes.js
+      │   │
+      │   └── app.js
+      │
+      ├── .env
+      ├── server.js
+      ├── package.json
+      ├── package-lock.json
+      └── README.md
 
 db.js
 
