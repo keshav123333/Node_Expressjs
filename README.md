@@ -363,9 +363,11 @@ Overview
 
 ## phase 1
 ### structure of code 
+ye pura backend mein hai 
 
       2.project_1
-      │
+      │backend 
+      niche ka pura backend foler mein hai 
       ├── node_modules
       │
       ├── src
@@ -439,66 +441,66 @@ storage.service.js
 
 app.js
       
-      const express=require("express")
-      const postModel=require("./models/post.model")
-      const multer=require("multer") //npm i multer 
-      const uploadFile=require("./services/storage.service")
-      
-      app=express()
-      
-      app.use(express.json())
-       
-      
-      const upload=multer({storage : multer.memoryStorage()})
-      //yaha like main image upload kar raha hu thundercloud mein hi toh vo kya hai return main mujhe undefine so multer uss file ko read m help how code dekh
-      //le and video se bhi samjh sakta hai tu
-      
-      
-      app.get("/",(req,res)=>{
-          res.send("ehll")
-      })
-      
-      app.post("/create-post",upload.single("image"),async (req,res)=>{ // yaha pe maine upload.single("image") ye kiya as ja post req aayi toh ye req se
-      //  image wale block ki file le lega yaha image iskliye as uss upload wali field ka label ye tha isliye 
-          
-          // console.log(req.body) //ab isme image ni ayegi sirf content ayega body mein
-          // console.log(`file ${req.file}`) // yaha pe ayegi maine file image toh but yaar pata ni mera ni aa raha  hai 
-          // res.status(200).json({
-          //     message:"chal image ho gi"
-          // })
-      
-      // yaha se main code ka logic upload ka 
-      const data=req.body
-      const imagefile=req.file
-      const result=uploadFile(imagefile.buffer,imagefile.orginalname)
-      const post=await postModel.create({
-          image:result.url,
-          caption:req.body.caption
-      })
-      res.status(200).json({
-          message:"here your url for image",
+         const express=require("express")
+         const postModel=require("./models/post.model")
+         const multer=require("multer") //npm i multer 
+         const uploadFile=require("./services/storage.service")
          
-          post:post
-      })
-      
-      
-      })
-      
-      
-      app.get("/posts",async (req,res)=>{
-      
-          const posts=postModel.find()
-          res.status(200).json({
-              message :"here is your all posts",
-              posts:post
-          })
-      
-      
-      })
-      
-      
-      
-      module.exports=app
+         app=express()
+         
+         app.use(express.json())
+          
+         
+         const upload=multer({storage : multer.memoryStorage()})
+         //yaha like main image upload kar raha hu thundercloud mein hi toh vo kya hai return main mujhe undefine so multer uss file ko read m help how code dekh
+         //le and video se bhi samjh sakta hai tu
+         
+         
+         app.get("/",(req,res)=>{
+             res.send("ehll")
+         })
+         
+         app.post("/create-post",upload.single("image"),async (req,res)=>{ // yaha pe maine upload.single("image") ye kiya as ja post req aayi toh ye req se
+         //  image wale block ki file le lega yaha image iskliye as uss upload wali field ka label ye tha isliye 
+             
+             // console.log(req.body) //ab isme image ni ayegi sirf content ayega body mein
+             // console.log(`file ${req.file}`) // yaha pe ayegi maine file image toh but yaar pata ni mera ni aa raha  hai 
+             // res.status(200).json({
+             //     message:"chal image ho gi"
+             // })
+         
+         // yaha se main code ka logic upload ka 
+         const data=req.body
+         const imagefile=req.file
+         const result= await uploadFile(imagefile.buffer,imagefile.orginalname)
+         const post=await postModel.create({
+             image:result.url,
+             caption:req.body.caption
+         })
+         res.status(200).json({
+             message:"here your url for image",
+            
+             post:post
+         })
+         
+         
+         })
+         
+         
+         app.get("/posts",async (req,res)=>{
+         
+             const posts= await postModel.find()
+             res.status(200).json({
+                 message :"here is your all posts",
+                 posts:post
+             })
+         
+         
+         })
+         
+         
+         
+         module.exports=app
 
 
 service.js
@@ -519,6 +521,31 @@ service.js
       app.listen(3000,()=>{console.log("Server is running on port 3000")})
 
 
-            
-      
+
+## Frontend Folder
+
+**wea re using react**
+
+1. install npm i react-router-dom   -> help in making diff package 
+
+isko like routes banaen ke liye ye react ki app.jsx file dekh isse 
+isme router routes banata and now if localhost:3000/ toh hone print hoga if /about pe toh abpout likha ayega 
+
+         import React from 'react'
+         
+         import {BrowserRouter as Router,Routes,Route} from "react-router-dom"
+         const App = () => {
+           return (
+             <Router>
+               <Routes>
+                 <Route path="/" element={<div>Home</div>} />
+                 <Route path="/about" element={<div>About</div>} />
+               </Routes>
+             </Router>
+           )
+         }
+         
+         export default App
+
+
       
