@@ -360,3 +360,165 @@ Overview
 
 1. service naam se ek folder alag se banya as isliye kyonki rule hai ki like ext service jaise cloud ya kuch aur like imagekit use karunga for uploading images so usko store ke liye abhi toh imagekit use kar raha hu but ho sakta hai baad m amazon s3 use karu and thode dino baad kuch aur use karu so isliye hum service mein alag se use
 
+
+## phase 1
+### structure of code 
+
+2.project_1
+│
+├── node_modules
+│
+├── src
+│   │
+│   ├── db
+│   │   └── db.js
+│   │
+│   ├── models
+│   │   └── post.model.js
+│   │
+│   ├── services
+│   │   └── storage.service.js
+│   │
+│   ├── routes
+│   │   └── post.routes.js
+│   │
+│   └── app.js
+│
+├── .env
+├── server.js
+├── package.json
+├── package-lock.json
+└── README.md
+
+db.js
+
+      const mongoose=require("mongoose")
+      
+      async function ConnectDB(){
+      mongoose.connect(process.env.MONGO_URL)
+      console.log("db is running")
+      }
+      
+      module.exports=ConnectDB    
+
+
+post.model.js
+
+      const mongoose=require("mongoose")
+      
+      const postschema=new mongoose.Schema({
+          Image:String,
+          content:String
+      })
+      //yaha ye post connection hai actually iska db keshav hai 
+      const postModel=mongoose.model("post",postschema)
+      
+      module.exports=postModel
+
+storage.service.js
+
+      const {ImageKit} = require("@imagekit/nodejs");
+      
+      const imagekit = new ImageKit({
+        publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+        privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+        urlEndpoint: "https://ik.imagekit.io/keshavrai"
+      });
+      
+      async function uploadFile(buffer, fileName) {
+        const result = await imagekit.upload({
+          file: buffer.toString("base64"),
+          fileName: fileName
+        });
+      
+        return result;
+      }
+      
+      module.exports = uploadFile;
+      
+
+app.js
+      
+      const express=require("express")
+      const postModel=require("./models/post.model")
+      const multer=require("multer") //npm i multer 
+      const uploadFile=require("./services/storage.service")
+      
+      app=express()
+      
+      app.use(express.json())
+       
+      
+      const upload=multer({storage : multer.memoryStorage()})
+      //yaha like main image upload kar raha hu thundercloud mein hi toh vo kya hai return main mujhe undefine so multer uss file ko read m help how code dekh
+      //le and video se bhi samjh sakta hai tu
+      
+      
+      app.get("/",(req,res)=>{
+          res.send("ehll")
+      })
+      
+      app.post("/create-post",upload.single("image"),async (req,res)=>{ // yaha pe maine upload.single("image") ye kiya as ja post req aayi toh ye req se
+      //  image wale block ki file le lega yaha image iskliye as uss upload wali field ka label ye tha isliye 
+          
+          // console.log(req.body) //ab isme image ni ayegi sirf content ayega body mein
+          // console.log(`file ${req.file}`) // yaha pe ayegi maine file image toh but yaar pata ni mera ni aa raha  hai 
+          // res.status(200).json({
+          //     message:"chal image ho gi"
+          // })
+      
+      // yaha se main code ka logic upload ka 
+      const data=req.body
+      const imagefile=req.file
+      const result=uploadFile(imagefile.buffer,imagefile.orginalname)
+      const post=await postModel.create({
+          image:result.url,
+          caption:req.body.caption
+      })
+      res.status(200).json({
+          message:"here your url for image",
+         
+          post:post
+      })
+      
+      
+      })
+      
+      
+      app.get("/posts",async (req,res)=>{
+      
+          const posts=postModel.find()
+          res.status(200).json({
+              message :"here is your all posts",
+              posts:post
+          })
+      
+      
+      })
+      
+      
+      
+      module.exports=app
+
+
+service.js
+
+
+      require("dotenv").config()  // ye upar load as ye sare key ko env m load          karke rakh lega
+      const app=require("./src/app")
+      const ConnectDB=require("./src/db/db")
+      
+      
+      
+      
+      ConnectDB()
+      
+      
+      
+      
+      app.listen(3000,()=>{console.log("Server is running on port 3000")})
+
+
+            
+      
+      
