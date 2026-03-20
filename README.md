@@ -563,3 +563,8 @@ isme router routes banata and now if localhost:3000/ toh hone print hoga if /abo
 
 
       
+
+## flow 
+1. sun flow samjh pura kaie work so pehle ek use react ka form bahrta and jab submit toh
+2. axios form data ko wrap karke bakend ke app.post /create-post wali api ko hot usme pehle vo image jo upload usse image kit mein store and then usko url and msg content ko db mein store
+3. and jab ab navigate uss user ko /posts wale get api ke pa bhej denge so ab feed wala saa data lega and get req behjega backend ko usme se mongo se data lega and usse upload use karke post display
