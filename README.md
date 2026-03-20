@@ -360,6 +360,15 @@ Overview
 
 1. service naam se ek folder alag se banya as isliye kyonki rule hai ki like ext service jaise cloud ya kuch aur like imagekit use karunga for uploading images so usko store ke liye abhi toh imagekit use kar raha hu but ho sakta hai baad m amazon s3 use karu and thode dino baad kuch aur use karu so isliye hum service mein alag se use
 
+## How to seprate the .env file
+
+1. .env create then usme sare secret daal
+2. npm i dotenv
+3. require("dotenv").config()  // ye upar load as ye sare key ko env m load          karke rakh lega
+4. then jaha jaha use vha pe process.env.**Mongourl** ye bold wali cheez apke us secrete key ka name hoti hai
+
+
+
 
 ## phase 1
 ### structure of code 
