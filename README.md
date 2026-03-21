@@ -454,70 +454,62 @@ storage.service.js
       
 
 app.js
-      
-         const express=require("express")
-         const postModel=require("./models/post.model")
-         const multer=require("multer") //npm i multer 
-         const uploadFile=require("./services/storage.service")
-         
-         app=express()
-         
-         app.use(express.json())
-          
-         
-         const upload=multer({storage : multer.memoryStorage()})
-         //yaha like main image upload kar raha hu thundercloud mein hi toh vo kya hai return main mujhe undefine so multer uss file ko read m help how code dekh
-         //le and video se bhi samjh sakta hai tu
-         
-         
-         app.get("/",(req,res)=>{
-             res.send("ehll")
-         })
-         
-         app.post("/create-post",upload.single("image"),async (req,res)=>{ // yaha pe maine upload.single("image") ye kiya as ja post req aayi toh ye req se
-         //  image wale block ki file le lega yaha image iskliye as uss upload wali field ka label ye tha isliye 
-             
-             // console.log(req.body) //ab isme image ni ayegi sirf content ayega body mein
-             // console.log(`file ${req.file}`) // yaha pe ayegi maine file image toh but yaar pata ni mera ni aa raha  hai 
-             // res.status(200).json({
-             //     message:"chal image ho gi"
-             // })
-         
-         // yaha se main code ka logic upload ka 
-         const data=req.body
-         const imagefile=req.file
-         const result= await uploadFile(imagefile.buffer,imagefile.orginalname)
-         const post=await postModel.create({
-             image:result.url,
-             caption:req.body.caption
-         })
-         res.status(200).json({
-             message:"here your url for image",
+
+            const express=require("express")
+            const postModel=require("./models/post.model")
+            const uploadFile=require("./service/storage.service")
+            const multer=require("multer")
+            const cors=require("cors")
             
-             post:post
-         })
-         
-         
-         })
-         
-         
-         app.get("/posts",async (req,res)=>{
-         
-             const posts= await postModel.find()
-             res.status(200).json({
-                 message :"here is your all posts",
-                 posts:post
-             })
-         
-         
-         })
-         
-         
-         
-         module.exports=app
+            const app=express()
+            
+            const upload=multer({storage:multer.memoryStorage()})
+            
+            
+            
+            app.use(cors())
+            app.use(express.json())
+            
+            app.get("/",async (req,res)=>{
+            
+                res.send("ehllo")
+            })
+            
+            
+            
+            
+            app.post("/create-post",upload.single("image"),async (req,res)=>{
+                let data=req.body
+                const imagefile=req.file
+                const result= await uploadFile(imagefile.buffer,imagefile.originalname)
+                const post= await postModel.create({
+                    image:result.url,
+                     caption:req.body.caption
+                })
+            
+                 res.status(200).json({
+                     message:"here your url for image",
+                    
+                     post:post
+                 })
+            })
+            
+            app.get("/posts",async (req,res)=>{
+                 
+                     const posts= await postModel.find()
+                     res.status(200).json({
+                         message :"here is your all posts",
+                         posts:posts
+                     })
+                 
+                 
+                 })
+            
+            
+            module.exports=app;
 
 
-service.js
+server.js
 
 
       require("dotenv").config()  // ye upar load as ye sare key ko env m load          karke rakh lega
@@ -568,3 +560,233 @@ isme router routes banata and now if localhost:3000/ toh hone print hoga if /abo
 1. sun flow samjh pura kaie work so pehle ek use react ka form bahrta and jab submit toh
 2. axios form data ko wrap karke bakend ke app.post /create-post wali api ko hot usme pehle vo image jo upload usse image kit mein store and then usko url and msg content ko db mein store
 3. and jab ab navigate uss user ko /posts wale get api ke pa bhej denge so ab feed wala saa data lega and get req behjega backend ko usme se mongo se data lega and usse upload use karke post display
+
+
+
+
+final project overvie aisa kuch backedna ka bhi 
+
+
+      project/
+      │
+      ├── backend/
+      │   ├── node_modules/
+      │   ├── src/
+      │   │   ├── db/
+      │   │   ├── models/
+      │   │   ├── services/
+      │   │   │   └── storage.service.js
+      │   │   └── app.js
+      │   │
+      │   ├── server.js   ← (present in backend root, not inside src)
+      │   ├── .env
+      │   ├── package.json
+      │   └── package-lock.json
+      │
+      ├── frontend/
+      │   ├── node_modules/
+      │   ├── public/
+      │   ├── src/
+      │   │   ├── assets/
+      │   │   ├── pages/
+      │   │   │   ├── CreatePost.jsx
+      │   │   │   └── Feed.jsx
+      │   │   │
+      │   │   ├── App.jsx
+      │   │   ├── App.css
+      │   │   ├── index.css
+      │   │   └── main.jsx
+      │   │
+      │   ├── index.html
+      │   ├── package.json
+      │   ├── package-lock.json
+      │   ├── vite.config.js
+      │   ├── eslint.config.js
+      │   ├── .gitignore
+      │   └── README.md
+
+
+
+CreatePost.jsx
+
+         import axios from 'axios';
+         import React from 'react';
+         import {useNavigate} from 'react-router-dom';
+         
+         function CreatePost(){
+             const navigate=useNavigate();
+             const handlesubmit=async (e)=>{
+                 e.preventDefault();
+                 const formData=new FormData(e.target);
+                 // const image=formData.get('image');
+                 // const caption=formData.get('caption');
+                 // console.log(image,caption)
+          
+                 axios.post('https://friendly-potato-69gw9qvxg4943rj4j-3000.app.github.dev/create-post',formData)
+                 .then((response) => {
+                     console.log(response.data);
+                     navigate('/feed') // Redirect to the feed page after successful post creation
+                 })
+             
+             .catch((error) => {
+                 console.error('Error creating post:', error);
+         
+             })
+             }
+             return (
+                 <section className="create-post-section">
+                     <h1>Create Post</h1>
+                     <form onSubmit={handlesubmit} >
+                         <input type="file" name="image" accept="image/*" />
+                         <input type="text" name="caption" placeholder="Caption" required />
+                         <button type="submit">Create Post</button>
+                     </form>
+                 </section>
+             )
+         }
+         
+         export default CreatePost;
+
+feed.jsx
+
+      import React,{useState,usRef,useEffect }from 'react';
+      import axios from 'axios';
+      
+      function Feed(){
+          const [posts,setPosts]=useState([
+              {id:1,image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR48MixIqIiVlT9rgU3AkNv7nj_ZgZozV9t_Q&s",
+                  caption:"first post"
+              }
+          ])
+      
+      useEffect(()=>{
+      axios.get('https://friendly-potato-69gw9qvxg4943rj4j-3000.app.github.dev/posts').then(
+          (res)=>{
+              setPosts(res.data.posts)  
+              console.log(res.data.posts)
+              console.log("posts")
+          }
+      )
+      
+      },[])
+      
+          return (
+              <section className='feed-section'>
+                  <h1>Feed</h1>
+              {
+                  posts.length>0?(
+                      posts.map((post)=>(
+                          <div key={post.id} className="post">
+                              <img src={post.image} alt="post" className='post-image' />
+                              <p className='post-caption'>{post.caption}</p>
+                          </div>
+                      ))
+                  ):(<h1>No posts available</h1>)
+              }
+      
+              </section>
+          )
+      
+      }
+      export default Feed;
+
+
+App.jsx
+         
+         import React from 'react';
+         import { BrowserRouter as Router, Route ,Routes } from 'react-router-dom';
+         import CreatePost from './pages/CreatePost';
+         import Feed from './pages/Feed';
+         
+         function App(){
+         return(
+           <div>
+              <Router>
+                 <Routes>
+                   <Route path="/create-post" element={ <CreatePost /> } />
+                   <Route path="/feed" element={ <Feed /> } />
+                 </Routes>
+              </Router>
+           </div>
+         )
+         }
+         
+         export default App;
+
+index.css
+         
+         *{
+           margin: 0;
+           padding: 0; 
+           box-sizing: border-box;
+         }
+         
+         html, body,#root{
+           height: 100%;
+           width: 100%;
+           font-family: 'Poppins', sans-serif;
+         }
+         
+         .create-post-section{
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           justify-content: center;
+           height: 100%;
+         }
+         .create-post-section h1{
+           font-size: 2.5rem;
+           margin-bottom: 20px;
+         }
+         .create-post-section form{
+           display: flex;
+           flex-direction: column;
+           gap: 20px;
+           width: 300px;
+         }
+         .create-post-section form input, .create-post-section form textarea{
+           padding: 10px;
+           margin-bottom: 15px;
+           border: 1px solid #ccc;
+           border-radius: 5px;
+         }
+         .create-post-section form button{
+           padding: 10px;
+           background-color: #007BFF;
+           color: white;
+           border: none;
+           border-radius: 5px;
+           cursor: pointer;
+         }
+         .create-post-section form button:hover{ 
+           background-color: #0056b3;
+         }
+         
+         
+         .feed-section{
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           justify-content: start;
+           height: 100%;
+         }
+         .feed-section h1{
+           font-size: 2.5rem;
+           margin-bottom: 20px;
+         }
+         .feed-section .post{
+           text-align: center;
+           
+           padding: 20px;
+           border: 1px solid #ccc;
+           border-radius: 5px;
+           margin-bottom: 20px;
+         }
+          
+
+
+
+# Authetication
+
+like student sirf student portal ka acesss but teacher stunt portal and director portal dono ko access kar akta hai 
+         
