@@ -796,3 +796,14 @@ ek imp cheez sun jaise insta ko kiase pta ki kaunsa user kaun as jab hum login t
 
 
 ## now ab major chee ye ki hum apna authentication app.js file mein ni routes file mein banayenge 
+
+
+
+Ab hum do alag file banate ek mein routes mein hum like routes likhte but unke anandar ke func ko hum controller naam ke folder ke andar likhte hai 
+
+
+
+## install
+npm i dotenv
+npm i monngoose
+npm i jsonwebtoken  -> ye jwt token genrate karta jisse hum like bhej sakte info auth m help
