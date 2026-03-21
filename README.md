@@ -807,3 +807,8 @@ Ab hum do alag file banate ek mein routes mein hum like routes likhte but unke a
 npm i dotenv
 npm i monngoose
 npm i jsonwebtoken  -> ye jwt token genrate karta jisse hum like bhej sakte info auth m help
+
+
+
+
+jab hum register ke time pe register toh vo info ko cookie main save kar deta hai fir usse kahise bhi acess kar sakte 
