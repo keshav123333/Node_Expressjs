@@ -790,3 +790,9 @@ index.css
 
 like student sirf student portal ka acesss but teacher stunt portal and director portal dono ko access kar akta hai 
          
+
+
+ek imp cheez sun jaise insta ko kiase pta ki kaunsa user kaun as jab hum login toh insta hume ek token deta so jab mein post ko access toh vo uss token se acha ye keshav so isko keshav wale post lake de de ye token cookie mein kisi register mein save hota hai 
+
+
+## now ab major chee ye ki hum apna authentication app.js file mein ni routes file mein banayenge 
