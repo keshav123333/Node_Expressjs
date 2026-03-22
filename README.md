@@ -807,8 +807,232 @@ Ab hum do alag file banate ek mein routes mein hum like routes likhte but unke a
 npm i dotenv
 npm i monngoose
 npm i jsonwebtoken  -> ye jwt token genrate karta jisse hum like bhej sakte info auth m help
+npm i cookie-parser
 
 
 
 
 jab hum register ke time pe register toh vo info ko cookie main save kar deta hai fir usse kahise bhi acess kar sakte 
+
+
+### structure 
+      
+      3.authentication/
+      │
+      ├── node_modules/            # dependencies (auto-generated)
+      │
+      ├── src/                     # main source code (recommended practice)
+      │   │
+      │   ├── controllers/
+      │   │   └── auth.controller.js
+      │   │
+      │   ├── db/
+      │   │   └── db.js
+      │   │
+      │   ├── models/
+      │   │   └── user.model.js
+      │   │
+      │   ├── routes/
+      │   │   ├── auth.routes.js
+      │   │   └── post.routes.js
+      │   │
+      │   └── app.js               # express app config
+      │
+      ├── .env                     # environment variables
+      ├── package.json
+      ├── package-lock.json
+      ├── server.js                # server start file
+      └── README.md
+      
+
+auth.controller.js
+
+
+      const userModel=require("../models/user.model");
+      const jwt=require("jsonwebtoken");
+      
+      
+      async function registerUser(req,res){
+        
+          const {username,email,password}=req.body;
+      const isuseexist=await userModel.findOne({email:email});
+      if(isuseexist){
+      
+          return res.status(400).json({
+              success:false,
+              message:"User already exist with this email"
+          })
+      }
+      
+      
+          const user= await userModel.create({
+              username,
+              email,
+              password
+          })
+      
+      
+          //  yaha maine id mein user._id as ye sare user ke liye unique hogi 
+          const token=jwt.sign({
+              id:user._id
+          },process.env.JWT_SECRET)
+      
+      
+          // so isne ek token ko like cookie mein save kar diya jab bhi register ya login kara maine toh  and ab jab bhi login ya post ko 
+      res.cookie("token", token );
+      
+          res.status(201).json({
+              success:true,
+              message:"User registered successfully",
+              user,
+              token
+          })
+          
+      
+      
+      }
+      
+      
+      module.exports={registerUser};
+
+
+db.js
+
+      const mongoose=require('mongoose');
+      
+      async function ConnectDB(){
+          try{
+      
+      await mongoose.connect(process.env.MONGO_URI)
+      console.log('Connected to MongoDB');
+      
+          }
+          catch(err){
+              console.error('Error connecting to MongoDB:', err);
+          }
+      }
+      
+      module.exports=ConnectDB;
+      
+
+user.model.js
+      
+      const mongoose=require('mongoose');
+      
+      const userschema =new mongoose.Schema({
+      username: {type: String},
+      email: {type: String, unique: true},   //so iss hum backend level pe ki koi email unique ho and ab same cheez hum frontend level pe bhi karte hai 
+      password: String
+      
+      })
+      
+      const userModel=mongoose.model("user",userschema);
+      
+      module.exports=userModel;
+
+
+auth.router.js
+
+         const express = require('express');
+         const authRoutes=require('../controller/auth.controller');
+         const router=express.Router();
+         
+         
+         //ab baat ko samjho, jab bhi koi client /api/auth/register pe request karega to ye func call hoga ad ye controler wale func ko use 
+         router.post("/register",authRoutes.registerUser);
+         
+         router.get("/get-cookie",async (req,res)=>{
+         
+             // so ab dekh tune post wali req hit waha cookie save ab usko kahi kisi req m acces kar sakta hai tu
+             // req .cookie mein 
+         const cookie=req.cookies;
+         
+         res.json({
+             success:true,
+             cookie:cookie
+         })
+         
+         
+         })
+         
+         
+         module.exports=router;
+
+post.router.js
+
+         const express=require('express');
+         
+         const jwt=require("jsonwebtoken");
+         const userModel=require("../models/user.model");
+         
+         const router=express.Router();
+         
+         router.post("/create",async (req,res)=>{
+             const token=req.cookies.token
+         
+             //if bande ko post create toh uske pas token hona haiye and sahi token hona chiye 
+             if(!token){
+         return res.status(401).json({
+             success:false,
+             message:"Unauthorized"
+         })}
+         
+         //but still like user ke liye spefic toke uska hi ya ni ye kaise confirm kare 
+         try{
+         // vo token bhej and ye check kya ye sahi token hai ya ni 
+            const decoded= jwt.verify(token,process.env.JWT_SECRET)
+            console.log(decoded)//ye like isme uss user ki id bhi hogi jo iss token ko banane mein lagi thi 
+            const user=await userModel.findOne({
+             _id:decoded.id
+            })
+         }
+         catch(err){
+         
+         }
+             
+         
+         
+         
+         })
+         
+         
+         
+         module.exports=router;
+
+
+app.js 
+
+         
+         const express=require('express');
+         const authRoutes=require('./routes/auth.routes');
+         const cors=require('cors');
+         const cookieParser=require("cookie-parser")
+         const postRoutes=require('./routes/post.routes');
+         
+         
+         
+         const app=express();
+         
+          
+         app.use(express.json());
+         app.use(cookieParser())
+         
+         //ab tu server /api/auth/register pe registerUser function ko call karega
+         app.use("/api/auth",authRoutes);
+         app.use("/api/post",postRoutes);
+         app
+         module.exports=app;
+
+server.js
+      
+      require('dotenv').config();
+      const app=require('./src/app');
+      const ConnectDB=require('./src/db/db');
+      
+      ConnectDB();
+      
+      
+      
+      app.listen(3000,()=>{
+          console.log('Server is running on port 3000');
+      })
