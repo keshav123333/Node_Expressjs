@@ -1036,3 +1036,28 @@ server.js
       app.listen(3000,()=>{
           console.log('Server is running on port 3000');
       })
+
+
+
+# spotify 
+
+tu chahe toh like 6 hour 5 minute pe e setting kar sakta hau
+
+         "scripts": {
+             "test": "echo \"Error: no test specified\" && exit 1",
+             "start": "node server.js",
+             "dev": "nodemon server.js"
+           },
+
+
+so iss setting se like if npm run dev toh dev wala code run if npm run start  toh start wala code 
+
+
+## hashing pass help to convert a text into hash and like "keshav" ke liye humesha same hash generate hoga bas but uss hash se vapis code gen mushkil
+
+
+
+## install
+npm i bcryptjs 
+npm i dotenv
+
