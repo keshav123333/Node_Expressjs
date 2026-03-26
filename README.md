@@ -1071,3 +1071,17 @@ npm i dotenv
 ## install
 npm i jest 
 npm i supertest
+
+
+
+jest wale ko toh test m bana ke kiya tha main test 
+
+## Validation 
+
+ab post wli snippet ko validate ke lye hum express validator ka use karenge 
+
+
+src mein middleware main validator jaise create karte hai usse 
+
+### install
+npm i express-validator
