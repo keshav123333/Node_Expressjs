@@ -1061,3 +1061,13 @@ so iss setting se like if npm run dev toh dev wala code run if npm run start  to
 npm i bcryptjs 
 npm i dotenv
 
+
+## iski file check kar le github pe 
+
+
+
+
+# Jest validation 
+## install
+npm i jest 
+npm i supertest
