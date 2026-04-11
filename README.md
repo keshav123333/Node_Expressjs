@@ -1085,3 +1085,25 @@ src mein middleware main validator jaise create karte hai usse
 
 ### install
 npm i express-validator
+
+
+
+
+
+# this is for req.query 
+
+
+http://localhost:5000/users?name=keshav&age=20
+
+Express code:
+
+app.get("/users", (req, res) => {
+  console.log(req.query);
+});
+
+👉 Output:
+
+{
+  name: "keshav",
+  age: "20"
+}
