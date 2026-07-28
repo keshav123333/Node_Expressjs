@@ -1107,3 +1107,132 @@ app.get("/users", (req, res) => {
   name: "keshav",
   age: "20"
 }
+
+
+# diffrent schema 
+
+Haan, bilkul. Agar `medicalInfo` ke andar tum dynamic keys rakhna chahte ho aur har key ki value kisi doosre model ka `ObjectId` reference ho, to `Map` use karna best rahega.
+
+### Example
+
+Maan lo tumhara doosra model hai `MedicalRecord`.
+
+```js
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
+    password: {
+        type: String,
+        required: true
+    },
+
+    email: {
+        type: String,
+        required: true
+    },
+
+    medicalInfo: {
+        type: Map,
+        of: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "MedicalRecord"
+        }
+    }
+});
+
+module.exports = mongoose.model("User", userSchema);
+```
+
+### MedicalRecord Model
+
+```js
+const mongoose = require("mongoose");
+
+const medicalRecordSchema = new mongoose.Schema({
+    disease: String,
+    doctor: String,
+    medicine: String
+});
+
+module.exports = mongoose.model("MedicalRecord", medicalRecordSchema);
+```
+
+### Data Save Karna
+
+```js
+const record1 = await MedicalRecord.create({
+    disease: "Diabetes",
+    doctor: "Dr. Sharma"
+});
+
+const record2 = await MedicalRecord.create({
+    disease: "Asthma",
+    doctor: "Dr. Verma"
+});
+
+await User.create({
+    username: "aman",
+    password: "123456",
+    email: "aman@gmail.com",
+
+    medicalInfo: {
+        diabetes: record1._id,
+        asthma: record2._id
+    }
+});
+```
+
+Database me document kuch aisa dikhega:
+
+```json
+{
+  "_id": "...",
+  "username": "aman",
+  "medicalInfo": {
+    "diabetes": "6890f1...",
+    "asthma": "6890f2..."
+  }
+}
+```
+
+### Populate
+
+```js
+const user = await User.findOne({ username: "aman" }).populate("medicalInfo.$*");
+
+console.log(user.medicalInfo.get("diabetes"));
+```
+
+`$*` ka matlab hai Map ki **saari values** populate kar do.
+
+---
+
+### Agar key bhi fixed hon
+
+Agar tumhe pata hai keys hamesha yehi rahengi (`bloodTest`, `xray`, `prescription`), to `Map` ki jagah normal object use karo:
+
+```js
+medicalInfo: {
+    bloodTest: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "MedicalRecord"
+    },
+    xray: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "MedicalRecord"
+    },
+    prescription: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "MedicalRecord"
+    }
+}
+```
+
+* **Dynamic keys** (jaise `diabetes`, `fever`, `heart`, `eye`) → `Map`.
+* **Fixed keys** (jaise `bloodTest`, `xray`) → normal nested object.
